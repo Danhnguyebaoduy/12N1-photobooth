@@ -1,0 +1,54 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>N1 Photobooth</title>
+  <script defer src="https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script defer>
+    let videoStream;
+    async function startCamera() {
+      videoStream = await navigator.mediaDevices.getUserMedia({ video: true });
+      const video = document.getElementById('video');
+      video.srcObject = videoStream;
+      video.play();
+    }
+
+    function capturePhoto() {
+      html2canvas(document.getElementById('frame')).then(canvas => {
+        const img = document.getElementById('photo');
+        img.src = canvas.toDataURL('image/png');
+        document.getElementById('result').classList.remove('hidden');
+      });
+    }
+
+    function downloadPhoto() {
+      const img = document.getElementById('photo');
+      const a = document.createElement('a');
+      a.href = img.src;
+      a.download = 'N1-photo.png';
+      a.click();
+    }
+
+    window.onload = startCamera;
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-pink-50 flex flex-col items-center justify-center min-h-screen p-4">
+  <h1 class="text-4xl font-bold text-pink-600 mb-4">📸 N1 Photobooth</h1>
+  <div id="frame" class="relative w-full max-w-md aspect-[3/4] bg-white rounded-2xl shadow-xl overflow-hidden">
+    <video id="video" class="w-full h-full object-cover"></video>
+    <div class="absolute top-2 left-2 text-white text-lg bg-pink-600 bg-opacity-70 px-2 py-1 rounded">
+      Lớp N1 💖
+    </div>
+  </div>
+  <button onclick="capturePhoto()" class="mt-4 bg-pink-500 text-white px-4 py-2 rounded-xl shadow hover:bg-pink-600">Chụp ảnh</button>
+
+  <div id="result" class="hidden mt-6 text-center">
+    <h2 class="text-xl font-semibold text-pink-700 mb-2">Ảnh của bạn:</h2>
+    <img id="photo" class="rounded-lg shadow-md mx-auto mb-2"/>
+    <button onclick="downloadPhoto()" class="bg-green-500 text-white px-4 py-2 rounded-xl shadow hover:bg-green-600">Tải về</button>
+  </div>
+</body>
+</html>
